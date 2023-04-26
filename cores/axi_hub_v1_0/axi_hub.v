@@ -45,7 +45,7 @@ module axi_hub #
   output wire                      b00_bram_rst,
   output wire                      b00_bram_en,
   output wire [3:0]                b00_bram_we,
-  output wire [15:0]               b00_bram_addr,
+  output wire [21:0]               b00_bram_addr,
   output wire [31:0]               b00_bram_wdata,
   input  wire [31:0]               b00_bram_rdata,
 
@@ -61,7 +61,7 @@ module axi_hub #
   output wire                      b01_bram_rst,
   output wire                      b01_bram_en,
   output wire [3:0]                b01_bram_we,
-  output wire [15:0]               b01_bram_addr,
+  output wire [21:0]               b01_bram_addr,
   output wire [31:0]               b01_bram_wdata,
   input  wire [31:0]               b01_bram_rdata,
 
@@ -77,7 +77,7 @@ module axi_hub #
   output wire                      b02_bram_rst,
   output wire                      b02_bram_en,
   output wire [3:0]                b02_bram_we,
-  output wire [15:0]               b02_bram_addr,
+  output wire [21:0]               b02_bram_addr,
   output wire [31:0]               b02_bram_wdata,
   input  wire [31:0]               b02_bram_rdata,
 
@@ -93,7 +93,7 @@ module axi_hub #
   output wire                      b03_bram_rst,
   output wire                      b03_bram_en,
   output wire [3:0]                b03_bram_we,
-  output wire [15:0]               b03_bram_addr,
+  output wire [21:0]               b03_bram_addr,
   output wire [31:0]               b03_bram_wdata,
   input  wire [31:0]               b03_bram_rdata,
 
@@ -109,7 +109,7 @@ module axi_hub #
   output wire                      b04_bram_rst,
   output wire                      b04_bram_en,
   output wire [3:0]                b04_bram_we,
-  output wire [15:0]               b04_bram_addr,
+  output wire [21:0]               b04_bram_addr,
   output wire [31:0]               b04_bram_wdata,
   input  wire [31:0]               b04_bram_rdata,
 
@@ -125,7 +125,7 @@ module axi_hub #
   output wire                      b05_bram_rst,
   output wire                      b05_bram_en,
   output wire [3:0]                b05_bram_we,
-  output wire [15:0]               b05_bram_addr,
+  output wire [21:0]               b05_bram_addr,
   output wire [31:0]               b05_bram_wdata,
   input  wire [31:0]               b05_bram_rdata,
 
@@ -135,46 +135,14 @@ module axi_hub #
 
   output wire [31:0]               m05_axis_tdata,
   output wire                      m05_axis_tvalid,
-  input  wire                      m05_axis_tready,
-
-  output wire                      b06_bram_clk,
-  output wire                      b06_bram_rst,
-  output wire                      b06_bram_en,
-  output wire [3:0]                b06_bram_we,
-  output wire [15:0]               b06_bram_addr,
-  output wire [31:0]               b06_bram_wdata,
-  input  wire [31:0]               b06_bram_rdata,
-
-  input  wire [31:0]               s06_axis_tdata,
-  input  wire                      s06_axis_tvalid,
-  output wire                      s06_axis_tready,
-
-  output wire [31:0]               m06_axis_tdata,
-  output wire                      m06_axis_tvalid,
-  input  wire                      m06_axis_tready,
-
-  output wire                      b07_bram_clk,
-  output wire                      b07_bram_rst,
-  output wire                      b07_bram_en,
-  output wire [3:0]                b07_bram_we,
-  output wire [15:0]               b07_bram_addr,
-  output wire [31:0]               b07_bram_wdata,
-  input  wire [31:0]               b07_bram_rdata,
-
-  input  wire [31:0]               s07_axis_tdata,
-  input  wire                      s07_axis_tvalid,
-  output wire                      s07_axis_tready,
-
-  output wire [31:0]               m07_axis_tdata,
-  output wire                      m07_axis_tvalid,
-  input  wire                      m07_axis_tready
+  input  wire                      m05_axis_tready
 );
 
   function integer clogb2 (input integer value);
     for(clogb2 = 0; value > 0; clogb2 = clogb2 + 1) value = value >> 1;
   endfunction
 
-  localparam integer HUB_SIZE = 8;
+  localparam integer HUB_SIZE = 6;
   localparam integer MUX_SIZE = HUB_SIZE + 2;
   localparam integer CFG_SIZE = CFG_DATA_WIDTH / 32;
   localparam integer CFG_WIDTH = CFG_SIZE > 1 ? clogb2(CFG_SIZE - 1) : 1;
@@ -183,7 +151,6 @@ module axi_hub #
 
   reg [3:0] int_awcntr_reg, int_awcntr_next;
   reg [3:0] int_arcntr_reg, int_arcntr_next;
-  reg [HUB_SIZE-1:0] int_rsel_reg;
 
   wire int_awvalid_wire, int_awready_wire;
   wire int_wvalid_wire, int_wready_wire;
@@ -213,14 +180,16 @@ module axi_hub #
 
   wire [31:0] int_bdata_wire [HUB_SIZE-1:0];
 
-  wire [15:0] int_waddr_wire;
-  wire [15:0] int_raddr_wire;
+  wire [21:0] int_waddr_wire;
+  wire [21:0] int_raddr_wire;
 
   wire [31:0] int_cfg_mux [CFG_SIZE-1:0];
   wire [31:0] int_sts_mux [STS_SIZE-1:0];
 
   wire [31:0] int_rdata_mux [MUX_SIZE-1:0];
   wire [MUX_SIZE-1:0] int_wsel_wire, int_rsel_wire;
+
+  wire [HUB_SIZE-1:0] int_bsel_wire;
 
   wire [CFG_SIZE-1:0] int_ce_wire;
   wire int_we_wire, int_re_wire;
@@ -238,10 +207,10 @@ module axi_hub #
   assign int_we_wire = int_bready_wire & int_awvalid_wire & int_wvalid_wire;
   assign int_re_wire = int_rready_wire & int_arvalid_wire;
 
-  assign int_waddr_wire = int_awaddr_wire[17:2] + int_awcntr_reg;
-  assign int_raddr_wire = int_araddr_wire[17:2] + int_arcntr_reg;
+  assign int_waddr_wire = int_awaddr_wire[23:2] + int_awcntr_reg;
+  assign int_raddr_wire = int_araddr_wire[23:2] + int_arcntr_reg;
 
-  assign int_rdata_wire[0] = int_rdata_mux[int_araddr_wire[27:20]];
+  assign int_rdata_wire[0] = int_rdata_mux[int_araddr_wire[27:24]];
 
   assign int_rdata_mux[0] = int_cfg_mux[int_raddr_wire[CFG_WIDTH-1:0]];
   assign int_rdata_mux[1] = int_sts_mux[int_raddr_wire[STS_WIDTH-1:0]];
@@ -250,7 +219,7 @@ module axi_hub #
     for(j = 0; j < HUB_SIZE; j = j + 1)
     begin : MUXES
       assign int_rdata_mux[j+2] = int_svalid_wire[j] ? int_sdata_wire[j] : 32'd0;
-      assign int_rdata_wire[j+2] = int_rsel_reg[j] ? int_bdata_wire[j] : 32'd0;
+      assign int_rdata_wire[j+2] = int_bsel_wire[j] ? int_bdata_wire[j] : 32'd0;
       assign int_mdata_wire[j] = int_wdata_wire;
       assign int_mvalid_wire[j] = int_wsel_wire[j+2];
       assign int_sready_wire[j] = int_rsel_wire[j+2];
@@ -260,8 +229,8 @@ module axi_hub #
   generate
     for(j = 0; j < MUX_SIZE; j = j + 1)
     begin : SELECTS
-      assign int_wsel_wire[j] = int_we_wire & (int_awaddr_wire[27:20] == j);
-      assign int_rsel_wire[j] = int_re_wire & (int_araddr_wire[27:20] == j);
+      assign int_wsel_wire[j] = int_we_wire & (int_awaddr_wire[27:24] == j);
+      assign int_rsel_wire[j] = int_re_wire & (int_araddr_wire[27:24] == j);
     end
   endgenerate
 
@@ -298,13 +267,11 @@ module axi_hub #
     begin
       int_awcntr_reg <= 4'd0;
       int_arcntr_reg <= 4'd0;
-      int_rsel_reg <= {(HUB_SIZE){1'b0}};
     end
     else
     begin
       int_awcntr_reg <= int_awcntr_next;
       int_arcntr_reg <= int_arcntr_next;
-      int_rsel_reg <= int_rsel_wire[2+HUB_SIZE-1:2] & ~int_svalid_wire;
     end
   end
 
@@ -373,16 +340,16 @@ module axi_hub #
   );
 
   output_buffer #(
-    .DATA_WIDTH(45)
+    .DATA_WIDTH(HUB_SIZE + 45)
   ) buf_4 (
     .aclk(aclk), .aresetn(aresetn),
-    .in_data({int_arid_wire, int_rlast_wire, int_rdata_wire[0]}),
+    .in_data({int_rsel_wire[MUX_SIZE-1:2] & ~int_svalid_wire, int_arid_wire, int_rlast_wire, int_rdata_wire[0]}),
     .in_valid(int_rvalid_wire), .in_ready(int_rready_wire),
-    .out_data({s_axi_rid, s_axi_rlast, int_rdata_wire[1]}),
+    .out_data({int_bsel_wire, s_axi_rid, s_axi_rlast, int_rdata_wire[1]}),
     .out_valid(s_axi_rvalid), .out_ready(s_axi_rready)
   );
 
-  assign s_axi_rdata = int_rdata_wire[1] | int_rdata_wire[2] | int_rdata_wire[3] | int_rdata_wire[4] | int_rdata_wire[5] | int_rdata_wire[6] | int_rdata_wire[7] | int_rdata_wire[8] | int_rdata_wire[9];
+  assign s_axi_rdata = int_rdata_wire[1] | int_rdata_wire[2] | int_rdata_wire[3] | int_rdata_wire[4] | int_rdata_wire[5] | int_rdata_wire[6] | int_rdata_wire[7];
 
   assign int_bdata_wire[0] = b00_bram_rdata;
   assign b00_bram_clk = aclk;
@@ -502,46 +469,6 @@ module axi_hub #
     .aclk(aclk), .aresetn(aresetn),
     .in_data(int_mdata_wire[5]), .in_valid(int_mvalid_wire[5]), .in_ready(int_mready_wire[5]),
     .out_data(m05_axis_tdata), .out_valid(m05_axis_tvalid), .out_ready(m05_axis_tready)
-  );
-
-  assign int_bdata_wire[6] = b06_bram_rdata;
-  assign b06_bram_clk = aclk;
-  assign b06_bram_rst = ~aresetn;
-  assign b06_bram_en = int_rsel_wire[8] | int_wsel_wire[8];
-  assign b06_bram_we = int_wsel_wire[8] ? int_wstrb_wire : 4'd0;
-  assign b06_bram_addr = int_we_wire ? int_waddr_wire : int_raddr_wire;
-  assign b06_bram_wdata = int_wdata_wire;
-
-  assign int_sdata_wire[6] = s06_axis_tdata;
-  assign int_svalid_wire[6] = s06_axis_tvalid;
-  assign s06_axis_tready = int_sready_wire[6];
-
-  inout_buffer #(
-    .DATA_WIDTH(32)
-  ) mbuf_6 (
-    .aclk(aclk), .aresetn(aresetn),
-    .in_data(int_mdata_wire[6]), .in_valid(int_mvalid_wire[6]), .in_ready(int_mready_wire[6]),
-    .out_data(m06_axis_tdata), .out_valid(m06_axis_tvalid), .out_ready(m06_axis_tready)
-  );
-
-  assign int_bdata_wire[7] = b07_bram_rdata;
-  assign b07_bram_clk = aclk;
-  assign b07_bram_rst = ~aresetn;
-  assign b07_bram_en = int_rsel_wire[9] | int_wsel_wire[9];
-  assign b07_bram_we = int_wsel_wire[9] ? int_wstrb_wire : 4'd0;
-  assign b07_bram_addr = int_we_wire ? int_waddr_wire : int_raddr_wire;
-  assign b07_bram_wdata = int_wdata_wire;
-
-  assign int_sdata_wire[7] = s07_axis_tdata;
-  assign int_svalid_wire[7] = s07_axis_tvalid;
-  assign s07_axis_tready = int_sready_wire[7];
-
-  inout_buffer #(
-    .DATA_WIDTH(32)
-  ) mbuf_7 (
-    .aclk(aclk), .aresetn(aresetn),
-    .in_data(int_mdata_wire[7]), .in_valid(int_mvalid_wire[7]), .in_ready(int_mready_wire[7]),
-    .out_data(m07_axis_tdata), .out_valid(m07_axis_tvalid), .out_ready(m07_axis_tready)
   );
 
 endmodule
