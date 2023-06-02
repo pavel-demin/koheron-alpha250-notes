@@ -8,8 +8,7 @@ NAME = led_blinker
 PART = xc7z020clg400-2
 PROC = ps7_cortexa9_0
 
-CORES = axi_hub_v1_0 axis_constant_v1_0 axis_fifo_v1_0 axis_variable_v1_0 \
-  port_slicer_v1_0
+CORES = axi_hub axis_constant axis_fifo axis_variable port_slicer
 
 VIVADO = vivado -nolog -nojournal -mode batch
 XSCT = xsct
