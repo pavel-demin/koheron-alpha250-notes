@@ -81,7 +81,7 @@ ln -s /media/mmcblk0p1/cache $root_dir/etc/apk/cache
 cp -r alpine/etc $root_dir/
 cp -r alpine/apps $root_dir/media/mmcblk0p1/
 
-for project in led_blinker
+for project in common_tools led_blinker
 do
   mkdir -p $root_dir/media/mmcblk0p1/apps/$project
   cp -r projects/$project/server/* $root_dir/media/mmcblk0p1/apps/$project/
@@ -159,7 +159,7 @@ lbu commit -d
 
 apk add make gcc
 
-for project in server
+for project in server common_tools
 do
   make -C /media/mmcblk0p1/apps/\$project clean
   make -C /media/mmcblk0p1/apps/\$project
