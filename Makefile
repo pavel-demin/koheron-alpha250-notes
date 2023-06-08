@@ -113,7 +113,7 @@ devicetree.dtb: uImage tmp/$(NAME).tree/system-top.dts
 	$(LINUX_DIR)/scripts/dtc/dtc -I dts -O dtb -o devicetree.dtb \
 	  -i tmp/$(NAME).tree tmp/$(NAME).tree/system-top.dts
 
-tmp/cores/%: cores/%/core_config.tcl cores/%/*.v
+tmp/cores/%: cores/%.v
 	mkdir -p $(@D)
 	$(VIVADO) -source scripts/core.tcl -tclargs $* $(PART)
 
