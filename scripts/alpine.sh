@@ -157,7 +157,7 @@ lbu delete root/.ash_history
 
 lbu commit -d
 
-apk add make gcc
+apk add make gcc linux-headers
 
 for project in server common_tools
 do
