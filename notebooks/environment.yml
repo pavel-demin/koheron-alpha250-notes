@@ -1,0 +1,8 @@
+name: koheron-alpha250-notes
+
+channels:
+  - conda-forge
+
+dependencies:
+  - ipykernel
+  - matplotlib
