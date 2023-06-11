@@ -6,4 +6,8 @@ make -j $JOBS cores
 
 make NAME=led_blinker all
 
+PRJS="playground"
+
+printf "%s\n" $PRJS | xargs -n 1 -P $JOBS -I {} make NAME={} bit
+
 sudo sh scripts/alpine.sh
