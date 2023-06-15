@@ -3,19 +3,20 @@
 
 module axis_spi #
 (
-  parameter integer SPI_DATA_WIDTH = 16
+  parameter integer SPI_DATA_WIDTH = 16,
+  parameter integer AXIS_TDATA_WIDTH = 16
 )
 (
   // System signals
-  input  wire        aclk,
-  input  wire        aresetn,
+  input  wire                        aclk,
+  input  wire                        aresetn,
 
-  output wire [3:0]  spi_data,
+  output wire [3:0]                  spi_data,
 
   // Slave side
-  output wire        s_axis_tready,
-  input  wire [31:0] s_axis_tdata,
-  input  wire        s_axis_tvalid
+  output wire                        s_axis_tready,
+  input  wire [AXIS_TDATA_WIDTH-1:0] s_axis_tdata,
+  input  wire                        s_axis_tvalid
 );
 
   reg [SPI_DATA_WIDTH-1:0] int_data_reg, int_data_next;
