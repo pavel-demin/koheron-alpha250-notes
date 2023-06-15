@@ -185,6 +185,7 @@ cell pavel-demin:user:axis_fifo fifo_1 {
 # Create axis_spi
 cell pavel-demin:user:axis_spi spi_0 {
   SPI_DATA_WIDTH 24
+  AXIS_TDATA_WIDTH 24
 } {
   S_AXIS fifo_1/M_AXIS
   spi_data spi_dac
