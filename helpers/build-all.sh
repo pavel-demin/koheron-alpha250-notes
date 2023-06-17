@@ -6,7 +6,7 @@ make -j $JOBS cores
 
 make NAME=led_blinker all
 
-PRJS="playground"
+PRJS="playground scanner"
 
 printf "%s\n" $PRJS | xargs -n 1 -P $JOBS -I {} make NAME={} bit
 
