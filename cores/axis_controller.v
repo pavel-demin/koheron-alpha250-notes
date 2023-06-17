@@ -15,7 +15,7 @@ module axis_controller
   output wire        s_axis_tready,
 
   // Master side
-  output wire [95:0] m_axis_tdata,
+  output wire [71:0] m_axis_tdata,
   output wire        m_axis_tvalid
 );
 
@@ -30,7 +30,7 @@ module axis_controller
     if(~aresetn)
     begin
       int_cntr_reg <= 32'd0;
-      int_data_reg <= 96'd0;
+      int_data_reg <= 72'd0;
       int_valid_reg <= 1'b0;
     end
     else
@@ -38,13 +38,13 @@ module axis_controller
       if(int_comp_wire)
       begin
         int_cntr_reg <= int_cntr_reg - 1'b1;
-        int_data_reg <= 96'd0;
+        int_data_reg <= 72'd0;
         int_valid_reg <= 1'b0;
       end
       else if(s_axis_tvalid)
       begin
         int_cntr_reg <= cfg_data;
-        int_data_reg <= {24'h000000, 24'h250000, 8'h14, s_axis_tdata[31:16], 8'h11, s_axis_tdata[15:0]};
+        int_data_reg <= {24'h250000, 8'h14, s_axis_tdata[31:16], 8'h11, s_axis_tdata[15:0]};
         int_valid_reg <= 1'b1;
       end
     end
