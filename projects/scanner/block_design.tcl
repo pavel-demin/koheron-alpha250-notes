@@ -228,9 +228,9 @@ for {set i 0} {$i <= 7} {incr i} {
     FILTER_TYPE Decimation
     NUMBER_OF_STAGES 6
     SAMPLE_RATE_CHANGES Programmable
-    MINIMUM_RATE 250
-    MAXIMUM_RATE 2500
-    FIXED_OR_INITIAL_RATE 250
+    MINIMUM_RATE 10
+    MAXIMUM_RATE 2000
+    FIXED_OR_INITIAL_RATE 10
     INPUT_SAMPLE_FREQUENCY 250
     CLOCK_FREQUENCY 250
     INPUT_DATA_WIDTH 24
@@ -277,6 +277,27 @@ cell xilinx.com:ip:axis_dwidth_converter conv_1 {
   aresetn slice_2/dout
 }
 
+# Create cic_compiler
+cell xilinx.com:ip:cic_compiler cic_8 {
+  INPUT_DATA_WIDTH.VALUE_SRC USER
+  FILTER_TYPE Decimation
+  NUMBER_OF_STAGES 6
+  SAMPLE_RATE_CHANGES Fixed
+  FIXED_OR_INITIAL_RATE 25
+  INPUT_SAMPLE_FREQUENCY 25
+  CLOCK_FREQUENCY 250
+  NUMBER_OF_CHANNELS 8
+  INPUT_DATA_WIDTH 32
+  QUANTIZATION Truncation
+  OUTPUT_DATA_WIDTH 32
+  HAS_DOUT_TREADY true
+  HAS_ARESETN true
+} {
+  S_AXIS_DATA conv_1/M_AXIS
+  aclk pll_0/clk_out1
+  aresetn slice_2/dout
+}
+
 # Create floating_point
 cell xilinx.com:ip:floating_point fp_0 {
   OPERATION_TYPE Fixed_to_float
@@ -289,7 +310,7 @@ cell xilinx.com:ip:floating_point fp_0 {
   RESULT_PRECISION_TYPE Single
   HAS_ARESETN true
 } {
-  S_AXIS_A conv_1/M_AXIS
+  S_AXIS_A cic_8/M_AXIS_DATA
   aclk pll_0/clk_out1
   aresetn slice_2/dout
 }

@@ -51,7 +51,7 @@ int main()
   cfg32[1] = 25000 - 1;
 
   /* set sample rate */
-  cfg16[1] = 2500;
+  cfg16[1] = 100;
 
   /* set frequency */
   cfg32[2] = (uint32_t)floor(10000000 / 250.0e6 * (1<<30) + 0.5);
