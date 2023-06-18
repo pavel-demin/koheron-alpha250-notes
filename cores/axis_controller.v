@@ -20,7 +20,7 @@ module axis_controller
 );
 
   reg [31:0] int_cntr_reg;
-  reg [95:0] int_data_reg;
+  reg [71:0] int_data_reg;
   reg int_valid_reg;
 
   assign int_comp_wire = |int_cntr_reg;
