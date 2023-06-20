@@ -15,17 +15,18 @@ int main()
   int fd, sock_server, sock_client;
   struct sockaddr_in addr;
   int n, m, counter, position, size, yes = 1;
-  uint8_t *buffer;
+  uint8_t *buffer0, *buffer1;
   uint32_t *coordinates, code, data;
   uint64_t command;
   volatile void *cfg, *sts;
   volatile uint8_t *cfg8;
   volatile uint16_t *cfg16, *rd_cntr, *wr_cntr;
-  volatile uint32_t *cfg32, *fifo;
+  volatile uint32_t *cfg32, *fifo0, *fifo1;
 
   size = 0;
   coordinates = malloc(4194304);
-  buffer = malloc(33554432);
+  buffer0 = malloc(41943040);
+  buffer1 = malloc(41943040);
 
   if((fd = open("/dev/mem", O_RDWR)) < 0)
   {
@@ -35,7 +36,8 @@ int main()
 
   cfg = mmap(NULL, sysconf(_SC_PAGESIZE), PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0x40000000);
   sts = mmap(NULL, sysconf(_SC_PAGESIZE), PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0x41000000);
-  fifo = mmap(NULL, 32*sysconf(_SC_PAGESIZE), PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0x42000000);
+  fifo0 = mmap(NULL, 20*sysconf(_SC_PAGESIZE), PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0x42000000);
+  fifo1 = mmap(NULL, 20*sysconf(_SC_PAGESIZE), PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0x43000000);
 
   wr_cntr = (uint16_t *)(sts + 0);
   rd_cntr = (uint16_t *)(sts + 2);
@@ -65,7 +67,7 @@ int main()
 
   /* set initial posisition */
   cfg8[0] |= 3;
-  *fifo = 0x7fff7fff;
+  *fifo0 = 0x7fff7fff;
   usleep(500);
   cfg8[0] &= ~3;
 
@@ -135,28 +137,34 @@ int main()
           cfg32[9] = data > 0 ? 0 : 1;
           break;
         case 6:
+          /* set frequency */
+          cfg32[10] = (uint32_t)floor(data / 250.0e6 * (1<<30) + 0.5);
+          cfg32[11] = data > 0 ? 0 : 1;
+          break;
+        case 7:
           /* clear coordinates */
           size = 0;
           break;
-        case 7:
+        case 8:
           /* add coordinates */
           if(size >= 1048576) continue;
           coordinates[size] = data;
           ++size;
           break;
-        case 8:
+        case 9:
           /* set position */
           cfg8[0] |= 3;
-          *fifo = data;
+          *fifo0 = data;
           usleep(500);
           cfg8[0] &= ~3;
           break;
-        case 9:
+        case 10:
           /* scan */
+          if(data > 1048576) continue;
           counter = 0;
           position = 0;
-          n = 2048;
-          m = 2048;
+          n = 1024;
+          m = 1024;
 
           /* enable FIFO buffers */
           cfg8[0] |= 9;
@@ -165,10 +173,11 @@ int main()
           {
             /* read ADC samples */
             if(n > data - counter) n = data - counter;
-            if(*rd_cntr < n * 8) usleep(500);
-            if(*rd_cntr >= n * 8 && counter < data)
+            if(*rd_cntr < n) usleep(500);
+            if(*rd_cntr >= n && counter < data)
             {
-              memcpy(buffer + counter * 32, fifo, n * 32);
+              memcpy(buffer0 + counter * 40, fifo0, n * 40);
+              memcpy(buffer1 + counter * 40, fifo1, n * 40);
               counter += n;
             }
 
@@ -176,7 +185,7 @@ int main()
             if(m > size - position) m = size - position;
             if(*wr_cntr < m && position < size)
             {
-              memcpy(fifo, coordinates + position, m * 4);
+              memcpy(fifo0, coordinates + position, m * 4);
               position += m;
             }
 
@@ -187,7 +196,8 @@ int main()
           /* stop scan */
           cfg8[0] &= ~15;
 
-          send(sock_client, buffer, data * 32, MSG_NOSIGNAL);
+          send(sock_client, buffer0, data * 40, MSG_NOSIGNAL);
+          send(sock_client, buffer1, data * 40, MSG_NOSIGNAL);
 
           break;
       }
