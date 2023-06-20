@@ -20,7 +20,7 @@ module axis_adc #
 );
   localparam PADDING_WIDTH = AXIS_TDATA_WIDTH - ADC_DATA_WIDTH;
 
-  reg [AXIS_TDATA_WIDTH-1:0] int_data_reg;
+  reg [ADC_DATA_WIDTH-1:0] int_data_reg;
 
   wire [ADC_DATA_WIDTH/2-1:0] int_adc_wire;
   wire [ADC_DATA_WIDTH-1:0] int_data_wire;
@@ -55,10 +55,10 @@ module axis_adc #
 
   always @(posedge aclk)
   begin
-    int_data_reg <= {{(PADDING_WIDTH+1){int_data_wire[ADC_DATA_WIDTH-1]}}, int_data_wire[ADC_DATA_WIDTH-2:0]};
+    int_data_reg <= int_data_wire;
   end
 
-  assign m_axis_tdata = int_data_reg;
+  assign m_axis_tdata = {{(PADDING_WIDTH+1){int_data_reg[ADC_DATA_WIDTH-1]}}, int_data_reg[ADC_DATA_WIDTH-2:0]};
   assign m_axis_tvalid = 1'b1;
 
 endmodule
