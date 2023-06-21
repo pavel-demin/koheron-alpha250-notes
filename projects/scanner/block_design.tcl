@@ -124,13 +124,19 @@ cell pavel-demin:user:axis_controller ctrl_0 {} {
   aresetn slice_1/dout
 }
 
-# Create axis_dwidth_converter
-cell xilinx.com:ip:axis_dwidth_converter conv_0 {
-  S_TDATA_NUM_BYTES.VALUE_SRC USER
-  S_TDATA_NUM_BYTES 9
-  M_TDATA_NUM_BYTES 3
+# Create xlconstant
+cell xilinx.com:ip:xlconstant const_1 {
+  CONST_WIDTH 16
+  CONST_VAL 2
+}
+
+# Create axis_downsizer
+cell pavel-demin:user:axis_downsizer conv_0 {
+  S_AXIS_TDATA_WIDTH 72
+  M_AXIS_TDATA_WIDTH 24
 } {
   S_AXIS ctrl_0/M_AXIS
+  cfg_data const_1/dout
   aclk pll_0/clk_out1
   aresetn slice_1/dout
 }
@@ -405,24 +411,30 @@ cell  xilinx.com:ip:axis_combiner comb_1 {
   aresetn slice_2/dout
 }
 
-# Create axis_dwidth_converter
-cell xilinx.com:ip:axis_dwidth_converter conv_1 {
-  S_TDATA_NUM_BYTES.VALUE_SRC USER
-  S_TDATA_NUM_BYTES 40
-  M_TDATA_NUM_BYTES 4
+# Create xlconstant
+cell xilinx.com:ip:xlconstant const_2 {
+  CONST_WIDTH 16
+  CONST_VAL 9
+}
+
+# Create axis_downsizer
+cell pavel-demin:user:axis_downsizer conv_1 {
+  S_AXIS_TDATA_WIDTH 320
+  M_AXIS_TDATA_WIDTH 32
 } {
   S_AXIS comb_0/M_AXIS
+  cfg_data const_2/dout
   aclk pll_0/clk_out1
   aresetn slice_2/dout
 }
 
-# Create axis_dwidth_converter
-cell xilinx.com:ip:axis_dwidth_converter conv_2 {
-  S_TDATA_NUM_BYTES.VALUE_SRC USER
-  S_TDATA_NUM_BYTES 40
-  M_TDATA_NUM_BYTES 4
+# Create axis_downsizer
+cell pavel-demin:user:axis_downsizer conv_2 {
+  S_AXIS_TDATA_WIDTH 320
+  M_AXIS_TDATA_WIDTH 32
 } {
   S_AXIS comb_1/M_AXIS
+  cfg_data const_2/dout
   aclk pll_0/clk_out1
   aresetn slice_2/dout
 }
@@ -551,27 +563,27 @@ cell pavel-demin:user:axis_fifo fifo_2 {
   aresetn slice_3/dout
 }
 
-# Create axis_dwidth_converter
-cell xilinx.com:ip:axis_dwidth_converter conv_5 {
-  S_TDATA_NUM_BYTES.VALUE_SRC USER
-  S_TDATA_NUM_BYTES 40
-  M_TDATA_NUM_BYTES 4
+# Create axis_downsizer
+cell pavel-demin:user:axis_downsizer conv_5 {
+  S_AXIS_TDATA_WIDTH 320
+  M_AXIS_TDATA_WIDTH 32
 } {
   S_AXIS fifo_1/M_AXIS
   M_AXIS hub_0/S00_AXIS
-  aclk /pll_0/clk_out1
+  cfg_data const_2/dout
+  aclk pll_0/clk_out1
   aresetn slice_3/dout
 }
 
-# Create axis_dwidth_converter
-cell xilinx.com:ip:axis_dwidth_converter conv_6 {
-  S_TDATA_NUM_BYTES.VALUE_SRC USER
-  S_TDATA_NUM_BYTES 40
-  M_TDATA_NUM_BYTES 4
+# Create axis_downsizer
+cell pavel-demin:user:axis_downsizer conv_6 {
+  S_AXIS_TDATA_WIDTH 320
+  M_AXIS_TDATA_WIDTH 32
 } {
   S_AXIS fifo_2/M_AXIS
   M_AXIS hub_0/S01_AXIS
-  aclk /pll_0/clk_out1
+  cfg_data const_2/dout
+  aclk pll_0/clk_out1
   aresetn slice_3/dout
 }
 
