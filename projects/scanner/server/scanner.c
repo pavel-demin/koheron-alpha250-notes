@@ -119,27 +119,22 @@ int main()
         case 2:
           /* set frequency */
           cfg32[2] = (uint32_t)floor(data / 250.0e6 * (1<<30) + 0.5);
-          cfg32[3] = data > 0 ? 0 : 1;
           break;
         case 3:
           /* set frequency */
-          cfg32[4] = (uint32_t)floor(data / 250.0e6 * (1<<30) + 0.5);
-          cfg32[5] = data > 0 ? 0 : 1;
+          cfg32[3] = (uint32_t)floor(data / 250.0e6 * (1<<30) + 0.5);
           break;
         case 4:
           /* set frequency */
-          cfg32[6] = (uint32_t)floor(data / 250.0e6 * (1<<30) + 0.5);
-          cfg32[7] = data > 0 ? 0 : 1;
+          cfg32[4] = (uint32_t)floor(data / 250.0e6 * (1<<30) + 0.5);
           break;
         case 5:
           /* set frequency */
-          cfg32[8] = (uint32_t)floor(data / 250.0e6 * (1<<30) + 0.5);
-          cfg32[9] = data > 0 ? 0 : 1;
+          cfg32[5] = (uint32_t)floor(data / 250.0e6 * (1<<30) + 0.5);
           break;
         case 6:
           /* set frequency */
-          cfg32[10] = (uint32_t)floor(data / 250.0e6 * (1<<30) + 0.5);
-          cfg32[11] = data > 0 ? 0 : 1;
+          cfg32[6] = (uint32_t)floor(data / 250.0e6 * (1<<30) + 0.5);
           break;
         case 7:
           /* clear coordinates */

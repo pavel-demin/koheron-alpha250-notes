@@ -53,7 +53,7 @@ cell xilinx.com:ip:proc_sys_reset rst_0 {} {
 
 # Create axi_hub
 cell pavel-demin:user:axi_hub hub_0 {
-  CFG_DATA_WIDTH 384
+  CFG_DATA_WIDTH 224
   STS_DATA_WIDTH 64
 } {
   S_AXI ps_0/M_AXI_GP0
@@ -63,42 +63,42 @@ cell pavel-demin:user:axi_hub hub_0 {
 
 # Create port_slicer
 cell pavel-demin:user:port_slicer slice_0 {
-  DIN_WIDTH 384 DIN_FROM 0 DIN_TO 0
+  DIN_WIDTH 224 DIN_FROM 0 DIN_TO 0
 } {
   din hub_0/cfg_data
 }
 
 # Create port_slicer
 cell pavel-demin:user:port_slicer slice_1 {
-  DIN_WIDTH 384 DIN_FROM 1 DIN_TO 1
+  DIN_WIDTH 224 DIN_FROM 1 DIN_TO 1
 } {
   din hub_0/cfg_data
 }
 
 # Create port_slicer
 cell pavel-demin:user:port_slicer slice_2 {
-  DIN_WIDTH 384 DIN_FROM 2 DIN_TO 2
+  DIN_WIDTH 224 DIN_FROM 2 DIN_TO 2
 } {
   din hub_0/cfg_data
 }
 
 # Create port_slicer
 cell pavel-demin:user:port_slicer slice_3 {
-  DIN_WIDTH 384 DIN_FROM 3 DIN_TO 3
+  DIN_WIDTH 224 DIN_FROM 3 DIN_TO 3
 } {
   din hub_0/cfg_data
 }
 
 # Create port_slicer
 cell pavel-demin:user:port_slicer slice_4 {
-  DIN_WIDTH 384 DIN_FROM 31 DIN_TO 16
+  DIN_WIDTH 224 DIN_FROM 31 DIN_TO 16
 } {
   din hub_0/cfg_data
 }
 
 # Create port_slicer
 cell pavel-demin:user:port_slicer slice_5 {
-  DIN_WIDTH 384 DIN_FROM 63 DIN_TO 32
+  DIN_WIDTH 224 DIN_FROM 63 DIN_TO 32
 } {
   din hub_0/cfg_data
 }
@@ -166,14 +166,14 @@ for {set i 0} {$i <= 4} {incr i} {
 
   # Create port_slicer
   cell pavel-demin:user:port_slicer slice_[expr $i + 6] {
-    DIN_WIDTH 384 DIN_FROM [expr 64 * $i + 103] DIN_TO [expr 64 * $i + 64]
+    DIN_WIDTH 224 DIN_FROM [expr 32 * $i + 95] DIN_TO [expr 32 * $i + 64]
   } {
     din hub_0/cfg_data
   }
 
   # Create axis_constant
   cell pavel-demin:user:axis_constant phase_$i {
-    AXIS_TDATA_WIDTH 40
+    AXIS_TDATA_WIDTH 32
   } {
     cfg_data slice_[expr $i + 6]/dout
     aclk pll_0/clk_out1
@@ -190,7 +190,6 @@ for {set i 0} {$i <= 4} {incr i} {
     PHASE_WIDTH 30
     OUTPUT_WIDTH 24
     NEGATIVE_SINE true
-    RESYNC true
   } {
     S_AXIS_PHASE phase_$i/M_AXIS
     aclk pll_0/clk_out1
