@@ -60,12 +60,14 @@ ln -s /media/mmcblk0p1/cache $root_dir/etc/apk/cache
 cp -r alpine/etc $root_dir/
 cp -r alpine/apps $root_dir/media/mmcblk0p1/
 
-for project in common_tools led_blinker playground scanner
+projects="common_tools led_blinker playground scanner"
+
+for p in $projects
 do
-  mkdir -p $root_dir/media/mmcblk0p1/apps/$project
-  cp -r projects/$project/server/* $root_dir/media/mmcblk0p1/apps/$project/
-  cp -r projects/$project/app/* $root_dir/media/mmcblk0p1/apps/$project/
-  cp tmp/$project.bit $root_dir/media/mmcblk0p1/apps/$project/
+  mkdir -p $root_dir/media/mmcblk0p1/apps/$p
+  cp -r projects/$p/server/* $root_dir/media/mmcblk0p1/apps/$p/
+  cp -r projects/$p/app/* $root_dir/media/mmcblk0p1/apps/$p/
+  cp tmp/$p.bit $root_dir/media/mmcblk0p1/apps/$p/
 done
 
 cp -r alpine-apk/sbin $root_dir/
@@ -137,10 +139,10 @@ lbu commit -d
 
 apk add make gcc linux-headers
 
-for project in server common_tools playground scanner
+for p in server $projects
 do
-  make -C /media/mmcblk0p1/apps/\$project clean
-  make -C /media/mmcblk0p1/apps/\$project
+  make -C /media/mmcblk0p1/apps/\$p clean
+  make -C /media/mmcblk0p1/apps/\$p
 done
 
 EOF_CHROOT
