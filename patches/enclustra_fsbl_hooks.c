@@ -12,7 +12,7 @@ EN_RESULT InitaliseSystem()
     return EN_SUCCESS;
 }
 
-int ConfigEthPhy()
+u32 ConfigEthPhy()
 {
     XEmacPs EmacPsInstance;
     XEmacPs *EmacPsInstancePtr = (XEmacPs*) &EmacPsInstance;

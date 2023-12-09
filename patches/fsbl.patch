@@ -1,14 +1,14 @@
 --- fsbl_hooks.c.old
 +++ fsbl_hooks.c
-@@ -54,6 +54,7 @@
- #include "fsbl.h"
- #include "xstatus.h"
- #include "fsbl_hooks.h"
-+#include "enclustra_fsbl_hooks.h"
+@@ -34,6 +34,7 @@
  
- /************************** Variable Definitions *****************************/
+ /************************** Function Prototypes ******************************/
  
-@@ -138,6 +139,7 @@ u32 FsblHookBeforeHandoff(void)
++u32 ConfigEthPhy();
+ 
+ /******************************************************************************
+ * This function is the hook which will be called  before the bitstream download.
+@@ -112,6 +113,7 @@ u32 FsblHookBeforeHandoff(void)
  	 * Errors to be stored in the status variable and returned
  	 */
  	fsbl_printf(DEBUG_INFO,"In FsblHookBeforeHandoff function \r\n");

@@ -119,7 +119,7 @@ tmp/%.bit: tmp/%.xpr
 tmp/%.fsbl/executable.elf: tmp/%.xsa
 	mkdir -p $(@D)
 	$(XSCT) scripts/fsbl.tcl $* $(PROC)
-	cp patches/enclustra_fsbl_* $(@D)
+	cp patches/enclustra_fsbl_hooks.c $(@D)
 	cp patches/enclustra_fsbl/* $(@D)
 	patch $(@D)/fsbl_hooks.c patches/fsbl.patch
 	make -C $(@D)
