@@ -35,12 +35,10 @@ class PyhubTCP:
             offset = 0
             limit = view.size
             while offset < limit:
-                buffer = self.socket.recv(65536)
+                buffer = self.socket.recv(limit - offset)
                 buffer = np.frombuffer(buffer, np.uint8)
                 size = buffer.size
-                if size > limit - offset:
-                    size = limit - offset
-                view[offset : offset + size] = buffer[:size]
+                view[offset : offset + size] = buffer
                 offset += size
             addr += part.size
 
