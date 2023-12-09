@@ -108,49 +108,6 @@ diff -rupN old/linux-6.1/drivers/char/Makefile linux-6.1/drivers/char/Makefile
  obj-$(CONFIG_ADI)		+= adi.o
 +obj-$(CONFIG_DEVCMA)		+= cma.o
 +obj-$(CONFIG_XILINX_DEVCFG)	+= xilinx_devcfg.o
-diff -rupN old/linux-6.1/drivers/net/phy/intel-xway.c linux-6.1/drivers/net/phy/intel-xway.c
---- old/linux-6.1/drivers/net/phy/intel-xway.c
-+++ linux-6.1/drivers/net/phy/intel-xway.c
-@@ -252,6 +252,12 @@ static int xway_gphy_config_init(struct
- 	if (err)
- 		return err;
-
-+	/* Set SGMII RX & TX timing skew to 2 ns & 2.5 ns respectively. */
-+	/* Set MII power supply to 2V5. */
-+	err = phy_write(phydev, 0x17, 0x4D00);
-+	if (err)
-+		return err;
-+
- 	phy_write_mmd(phydev, MDIO_MMD_VEND2, XWAY_MMD_LEDCH,
- 		      XWAY_MMD_LEDCH_NACS_NONE |
- 		      XWAY_MMD_LEDCH_SBF_F02HZ |
-@@ -261,20 +267,16 @@ static int xway_gphy_config_init(struct
- 		      XWAY_MMD_LEDCH_SCAN_NONE);
-
- 	/**
--	 * In most cases only one LED is connected to this phy, so
--	 * configure them all to constant on and pulse mode. LED3 is
--	 * only available in some packages, leave it in its reset
--	 * configuration.
-+	 * Set LED0 blinking on RX/TX.
-+	 * Set LED1 blinking on link speed: slow=10M, fast=100M, on=1G.
- 	 */
--	ledxh = XWAY_MMD_LEDxH_BLINKF_NONE | XWAY_MMD_LEDxH_CON_LINK10XX;
--	ledxl = XWAY_MMD_LEDxL_PULSE_TXACT | XWAY_MMD_LEDxL_PULSE_RXACT |
--		XWAY_MMD_LEDxL_BLINKS_NONE;
--	phy_write_mmd(phydev, MDIO_MMD_VEND2, XWAY_MMD_LED0H, ledxh);
-+	ledxl = XWAY_MMD_LEDxL_PULSE_TXACT | XWAY_MMD_LEDxL_PULSE_RXACT;
-+	phy_write_mmd(phydev, MDIO_MMD_VEND2, XWAY_MMD_LED0H, 0);
- 	phy_write_mmd(phydev, MDIO_MMD_VEND2, XWAY_MMD_LED0L, ledxl);
-+	ledxh = XWAY_MMD_LEDxH_CON_LINK1000 | XWAY_MMD_LEDxH_BLINKF_LINK100;
-+	ledxl = XWAY_MMD_LEDxH_CON_LINK10;
- 	phy_write_mmd(phydev, MDIO_MMD_VEND2, XWAY_MMD_LED1H, ledxh);
- 	phy_write_mmd(phydev, MDIO_MMD_VEND2, XWAY_MMD_LED1L, ledxl);
--	phy_write_mmd(phydev, MDIO_MMD_VEND2, XWAY_MMD_LED2H, ledxh);
--	phy_write_mmd(phydev, MDIO_MMD_VEND2, XWAY_MMD_LED2L, ledxl);
-
- 	err = xway_gphy_rgmii_init(phydev);
- 	if (err)
 diff -rupN old/linux-6.1/drivers/net/wireless/realtek/Kconfig linux-6.1/drivers/net/wireless/realtek/Kconfig
 --- old/linux-6.1/drivers/net/wireless/realtek/Kconfig
 +++ linux-6.1/drivers/net/wireless/realtek/Kconfig
