@@ -64,7 +64,7 @@ module axis_fifo #
     .dout(int_data_wire[0])
   );
 
-  assign read_count = int_rcount_wire + int_valid_wire[1] + int_valid_wire[2] ;
+  assign read_count = int_rcount_wire + int_valid_wire[1] + int_valid_wire[2];
 
   assign int_valid_wire[0] = ~int_empty_wire;
 
