@@ -8,8 +8,8 @@ NAME = led_blinker
 PART = xc7z020clg400-2
 PROC = ps7_cortexa9_0
 
-CORES = axi_hub axis_adc axis_constant axis_controller axis_counter \
-  axis_downsizer axis_fifo axis_spi axis_variable dsp48 port_slicer
+FILES = $(wildcard cores/*.v)
+CORES = $(FILES:.v=)
 
 VIVADO = vivado -nolog -nojournal -mode batch
 XSCT = xsct
@@ -38,7 +38,7 @@ RTL8188_URL = https://github.com/lwfinger/rtl8188eu/archive/v5.2.2.4.tar.gz
 
 all: tmp/$(NAME).bit boot.bin uImage devicetree.dtb
 
-cores: $(addprefix tmp/cores/, $(CORES))
+cores: $(addprefix tmp/, $(CORES))
 
 xpr: tmp/$(NAME).xpr
 
@@ -108,7 +108,7 @@ tmp/cores/%: cores/%.v
 	mkdir -p $(@D)
 	$(VIVADO) -source scripts/core.tcl -tclargs $* $(PART)
 
-tmp/%.xpr: projects/% $(addprefix tmp/cores/, $(CORES))
+tmp/%.xpr: projects/% $(addprefix tmp/, $(CORES))
 	mkdir -p $(@D)
 	$(VIVADO) -source scripts/project.tcl -tclargs $* $(PART)
 
