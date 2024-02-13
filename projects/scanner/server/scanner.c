@@ -25,8 +25,8 @@ int main()
 
   size = 0;
   coordinates = malloc(4194304);
-  buffer0 = malloc(41943040);
-  buffer1 = malloc(41943040);
+  buffer0 = malloc(58720256);
+  buffer1 = malloc(58720256);
 
   if((fd = open("/dev/mem", O_RDWR)) < 0)
   {
@@ -36,8 +36,8 @@ int main()
 
   cfg = mmap(NULL, sysconf(_SC_PAGESIZE), PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0x40000000);
   sts = mmap(NULL, sysconf(_SC_PAGESIZE), PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0x41000000);
-  fifo0 = mmap(NULL, 20*sysconf(_SC_PAGESIZE), PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0x42000000);
-  fifo1 = mmap(NULL, 20*sysconf(_SC_PAGESIZE), PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0x43000000);
+  fifo0 = mmap(NULL, 28*sysconf(_SC_PAGESIZE), PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0x42000000);
+  fifo1 = mmap(NULL, 28*sysconf(_SC_PAGESIZE), PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0x43000000);
 
   wr_cntr = (uint16_t *)(sts + 0);
   rd_cntr = (uint16_t *)(sts + 2);
@@ -57,13 +57,12 @@ int main()
 
   /* set frequency */
   cfg32[2] = (uint32_t)floor(10000000 / 250.0e6 * (1<<30) + 0.5);
-  cfg32[3] = 0;
+  cfg32[3] = (uint32_t)floor(10000000 / 250.0e6 * (1<<30) + 0.5);
   cfg32[4] = (uint32_t)floor(10000000 / 250.0e6 * (1<<30) + 0.5);
-  cfg32[5] = 0;
+  cfg32[5] = (uint32_t)floor(10000000 / 250.0e6 * (1<<30) + 0.5);
   cfg32[6] = (uint32_t)floor(10000000 / 250.0e6 * (1<<30) + 0.5);
-  cfg32[7] = 0;
+  cfg32[7] = (uint32_t)floor(10000000 / 250.0e6 * (1<<30) + 0.5);
   cfg32[8] = (uint32_t)floor(10000000 / 250.0e6 * (1<<30) + 0.5);
-  cfg32[9] = 0;
 
   /* set initial posisition */
   cfg8[0] |= 3;
@@ -137,23 +136,31 @@ int main()
           cfg32[6] = (uint32_t)floor(data / 250.0e6 * (1<<30) + 0.5);
           break;
         case 7:
+          /* set frequency */
+          cfg32[7] = (uint32_t)floor(data / 250.0e6 * (1<<30) + 0.5);
+          break;
+        case 8:
+          /* set frequency */
+          cfg32[8] = (uint32_t)floor(data / 250.0e6 * (1<<30) + 0.5);
+          break;
+        case 9:
           /* clear coordinates */
           size = 0;
           break;
-        case 8:
+        case 10:
           /* add coordinates */
           if(size >= 1048576) continue;
           coordinates[size] = data;
           ++size;
           break;
-        case 9:
+        case 11:
           /* set position */
           cfg8[0] |= 3;
           *fifo0 = data;
           usleep(500);
           cfg8[0] &= ~3;
           break;
-        case 10:
+        case 12:
           /* scan */
           if(data > 1048576) continue;
           counter = 0;
@@ -171,8 +178,8 @@ int main()
             if(*rd_cntr < n) usleep(500);
             if(*rd_cntr >= n && counter < data)
             {
-              memcpy(buffer0 + counter * 40, fifo0, n * 40);
-              memcpy(buffer1 + counter * 40, fifo1, n * 40);
+              memcpy(buffer0 + counter * 56, fifo0, n * 56);
+              memcpy(buffer1 + counter * 56, fifo1, n * 56);
               counter += n;
             }
 
@@ -191,8 +198,8 @@ int main()
           /* stop scan */
           cfg8[0] &= ~15;
 
-          send(sock_client, buffer0, data * 40, MSG_NOSIGNAL);
-          send(sock_client, buffer1, data * 40, MSG_NOSIGNAL);
+          send(sock_client, buffer0, data * 56, MSG_NOSIGNAL);
+          send(sock_client, buffer1, data * 56, MSG_NOSIGNAL);
 
           break;
       }
