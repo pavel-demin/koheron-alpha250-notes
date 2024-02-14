@@ -24,12 +24,8 @@ module axis_downsizer #
   input  wire                          m_axis_tready
 );
 
-  function integer clogb2 (input integer value);
-    for(clogb2 = 0; value > 0; clogb2 = clogb2 + 1) value = value >> 1;
-  endfunction
-
   localparam integer RATIO = S_AXIS_TDATA_WIDTH / M_AXIS_TDATA_WIDTH;
-  localparam integer CNTR_WIDTH = RATIO > 1 ? clogb2(RATIO - 1) : 1;
+  localparam integer CNTR_WIDTH = RATIO > 1 ? $clog2(RATIO) : 1;
   localparam integer DATA_WIDTH = S_AXIS_TDATA_WIDTH - M_AXIS_TDATA_WIDTH;
 
   reg [DATA_WIDTH-1:0] int_data_reg, int_data_next;
