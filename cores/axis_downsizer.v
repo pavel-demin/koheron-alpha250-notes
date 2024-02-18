@@ -101,6 +101,6 @@ module axis_downsizer #
     .out_data(m_axis_tdata), .out_valid(m_axis_tvalid), .out_ready(m_axis_tready)
   );
 
-  assign s_axis_tready = ~int_comp_wire & int_ready_wire[0] & aresetn;
+  assign s_axis_tready = ~int_comp_wire & int_ready_wire[0];
 
 endmodule
