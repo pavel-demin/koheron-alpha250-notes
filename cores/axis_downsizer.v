@@ -32,10 +32,9 @@ module axis_downsizer #
   reg [CNTR_WIDTH-1:0] int_cntr_reg, int_cntr_next;
 
   wire [M_AXIS_TDATA_WIDTH-1:0] int_data_mux [RATIO-2:0];
-  wire [M_AXIS_TDATA_WIDTH-1:0] int_data_wire [1:0];
+  wire [M_AXIS_TDATA_WIDTH-1:0] int_data_wire;
   wire [CNTR_WIDTH-1:0] int_sel_wire;
-  wire [1:0] int_valid_wire, int_ready_wire;
-  wire int_comp_wire;
+  wire int_comp_wire, int_valid_wire, int_ready_wire;
 
   genvar j;
 
@@ -43,9 +42,9 @@ module axis_downsizer #
 
   assign int_comp_wire = |int_cntr_reg;
 
-  assign int_valid_wire[0] = int_comp_wire | s_axis_tvalid;
+  assign int_valid_wire = int_comp_wire | s_axis_tvalid;
 
-  assign int_data_wire[0] = int_comp_wire ? int_data_mux[int_sel_wire] : s_axis_tdata[M_AXIS_TDATA_WIDTH-1:0];
+  assign int_data_wire = int_comp_wire ? int_data_mux[int_sel_wire] : s_axis_tdata[M_AXIS_TDATA_WIDTH-1:0];
 
   generate
     for(j = 0; j < RATIO - 1; j = j + 1)
@@ -73,34 +72,26 @@ module axis_downsizer #
     int_data_next = int_data_reg;
     int_cntr_next = int_cntr_reg;
 
-    if(int_comp_wire & int_ready_wire[0])
+    if(int_comp_wire & int_ready_wire)
     begin
       int_cntr_next = int_cntr_reg - 1'b1;
     end
 
-    if(s_axis_tvalid & ~int_comp_wire & int_ready_wire[0])
+    if(s_axis_tvalid & ~int_comp_wire & int_ready_wire)
     begin
       int_cntr_next = cfg_data[CNTR_WIDTH-1:0];
       int_data_next = s_axis_tdata[S_AXIS_TDATA_WIDTH-1:M_AXIS_TDATA_WIDTH];
     end
   end
 
-  output_buffer #(
+  inout_buffer #(
     .DATA_WIDTH(M_AXIS_TDATA_WIDTH)
   ) buf_0 (
     .aclk(aclk), .aresetn(aresetn),
-    .in_data(int_data_wire[0]), .in_valid(int_valid_wire[0]), .in_ready(int_ready_wire[0]),
-    .out_data(int_data_wire[1]), .out_valid(int_valid_wire[1]), .out_ready(int_ready_wire[1])
-  );
-
-  inout_buffer #(
-    .DATA_WIDTH(M_AXIS_TDATA_WIDTH)
-  ) buf_1 (
-    .aclk(aclk), .aresetn(aresetn),
-    .in_data(int_data_wire[1]), .in_valid(int_valid_wire[1]), .in_ready(int_ready_wire[1]),
+    .in_data(int_data_wire), .in_valid(int_valid_wire), .in_ready(int_ready_wire),
     .out_data(m_axis_tdata), .out_valid(m_axis_tvalid), .out_ready(m_axis_tready)
   );
 
-  assign s_axis_tready = ~int_comp_wire & int_ready_wire[0];
+  assign s_axis_tready = ~int_comp_wire & int_ready_wire;
 
 endmodule
