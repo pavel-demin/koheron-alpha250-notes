@@ -38,7 +38,7 @@ module axis_downsizer #
 
   generate
     for(j = 0; j < RATIO; j = j + 1)
-    begin : WORDS
+    begin : SLICES
       assign int_data_mux[j] = s_axis_tdata[j*M_AXIS_TDATA_WIDTH+:M_AXIS_TDATA_WIDTH];
     end
   endgenerate
