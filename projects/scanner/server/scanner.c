@@ -23,14 +23,14 @@ struct frame
   uint32_t h;
 };
 
-uint32_t crc16(uint8_t const *f, int length)
+uint16_t crc16(uint8_t const *data, int length)
 {
   uint16_t crc = 0xffff;
   int i, j;
 
   for(i = 0; i < length; ++i)
   {
-    crc = crc ^ (f[length - 1 - i] << 8);
+    crc = crc ^ (data[length - 1 - i] << 8);
     for(j = 0; j < 8; j++)
     {
       crc = crc & 0x8000 ? crc << 1 ^ 0x8005 : crc << 1;
@@ -99,13 +99,13 @@ int main()
   f.h = 0x10020000;
   f.p[0] = 0;
   f.p[1] = 0;
-  f.c = crc16(f.p, 12);
-  cfg8[0] |= 4;                                                         
-  cfg8[0] |= 1;                                                         
-  memcpy(fifo0, &f, 12);                                                
-  cfg8[0] |= 2;                                                         
-  usleep(500);                                                          
-  cfg8[0] &= ~7;                                                        
+  f.c = crc16((uint8_t *)f.p, 12);
+  cfg8[0] |= 4;
+  cfg8[0] |= 1;
+  memcpy(fifo0, &f, 12);
+  cfg8[0] |= 2;
+  usleep(500);
+  cfg8[0] &= ~7;
 
   if((sock_server = socket(AF_INET, SOCK_STREAM, 0)) < 0)
   {
@@ -189,7 +189,7 @@ int main()
           if(size >= 1048576) continue;
           f.p[0] = c.data[0];
           f.p[1] = c.data[1];
-          f.c = crc16(f.p, 12);
+          f.c = crc16((uint8_t *)f.p, 12);
           memcpy(coordinates + size * 3, &f, 12);
           ++size;
           break;
@@ -197,13 +197,13 @@ int main()
           /* set position */
           f.p[0] = c.data[0];
           f.p[1] = c.data[1];
-          f.c = crc16(f.p, 12);
+          f.c = crc16((uint8_t *)f.p, 12);
           cfg8[0] |= 4;
-          cfg8[0] |= 1;                                                         
-          memcpy(fifo0, &f, 12);                                                
-          cfg8[0] |= 2;                                                         
-          usleep(500);                                                          
-          cfg8[0] &= ~7;                                                        
+          cfg8[0] |= 1;
+          memcpy(fifo0, &f, 12);
+          cfg8[0] |= 2;
+          usleep(500);
+          cfg8[0] &= ~7;
           break;
         case 12:
           /* scan */
