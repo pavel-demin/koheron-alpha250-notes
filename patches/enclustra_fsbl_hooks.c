@@ -1,3 +1,4 @@
+#include "fsbl.h"
 #include "xemacps.h"
 
 #include "I2cInterface.h"
@@ -35,7 +36,7 @@ u32 ConfigEthPhy()
             // query it using the EEPROM API functions.
             if (EN_SUCCEEDED(Eeprom_GetModuleInfo(&serialNumber, &productNumberInfo, (uint64_t *)macAddress)))
             {
-                XFsbl_Printf(DEBUG_GENERAL, "MAC address configured successfully from EEPROM\n\r");
+                fsbl_printf(DEBUG_GENERAL, "MAC address configured successfully from EEPROM\n\r");
                 EmacPsMAC[0] = macAddress[5];
                 EmacPsMAC[1] = macAddress[4];
                 EmacPsMAC[2] = macAddress[3];
@@ -64,7 +65,7 @@ u32 ConfigEthPhy()
 
     if (Status != XST_SUCCESS)
     {
-        XFsbl_Printf(DEBUG_INFO, "Error in initialize\n\r");
+        fsbl_printf(DEBUG_INFO, "Error in initialize\n\r");
         return XST_FAILURE;
     }
 
@@ -74,7 +75,7 @@ u32 ConfigEthPhy()
     Status = XEmacPs_SetMacAddress(EmacPsInstancePtr, EmacPsMAC, 1);
     if (Status != XST_SUCCESS)
     {
-        XFsbl_Printf(DEBUG_INFO, "Error setting MAC address\n\r");
+        fsbl_printf(DEBUG_INFO, "Error setting MAC address\n\r");
         return XST_FAILURE;
     }
 
@@ -88,7 +89,7 @@ u32 ConfigEthPhy()
     // enabling RGMII delays
     if (PhyType == 0x162)
     { // KSZ9031
-        XFsbl_Printf(DEBUG_GENERAL, "Detected KSZ9031 Ethernet PHY\n\r");
+        fsbl_printf(DEBUG_GENERAL, "Detected KSZ9031 Ethernet PHY\n\r");
         // Ctrl Delay
         u16 RxCtrlDelay = 7; // 0..15, default 7
         u16 TxCtrlDelay = 7; // 0..15, default 7
@@ -117,7 +118,7 @@ u32 ConfigEthPhy()
     }
     else if (PhyType == 0x161)
     { // KSZ9021
-        XFsbl_Printf(DEBUG_GENERAL, "Detected KSZ9021 Ethernet PHY\n\r");
+        fsbl_printf(DEBUG_GENERAL, "Detected KSZ9021 Ethernet PHY\n\r");
         XEmacPs_PhyWrite(EmacPsInstancePtr, PhyAddr, 0xB, 0x8104); // write Reg 0x104
         XEmacPs_PhyWrite(EmacPsInstancePtr, PhyAddr, 0xC, 0xF0F0); // set write data
         XEmacPs_PhyWrite(EmacPsInstancePtr, PhyAddr, 0xB, 0x8105); // write Reg 0x105
@@ -125,7 +126,7 @@ u32 ConfigEthPhy()
     }
     else if (PhyType == 0x164)
     { // KSZ9131
-        XFsbl_Printf(DEBUG_GENERAL, "Detected KSZ9131 Ethernet PHY\n\r");
+        fsbl_printf(DEBUG_GENERAL, "Detected KSZ9131 Ethernet PHY\n\r");
         // Ctrl Delay
         u16 RxCtrlDelay = 7; // 0..15, default 7
         u16 TxCtrlDelay = 7; // 0..15, default 7
@@ -156,7 +157,7 @@ u32 ConfigEthPhy()
     }
     else
     {
-        XFsbl_Printf(DEBUG_GENERAL, "Unknown PHY type: 0x%x\n\r", PhyType);
+        fsbl_printf(DEBUG_GENERAL, "Unknown PHY type: 0x%x\n\r", PhyType);
     }
 
     // Issue a reset to phy
@@ -167,7 +168,7 @@ u32 ConfigEthPhy()
     Status |= XEmacPs_PhyRead(EmacPsInstancePtr, PhyAddr, 0x0, &PhyData);
     if (Status != XST_SUCCESS)
     {
-        XFsbl_Printf(DEBUG_GENERAL, "Error reset phy \n\r");
+        fsbl_printf(DEBUG_GENERAL, "Error reset phy \n\r");
         return -1;
     }
     else
