@@ -60,7 +60,7 @@ ln -s /media/mmcblk0p1/cache $root_dir/etc/apk/cache
 cp -r alpine/etc $root_dir/
 cp -r alpine/apps $root_dir/media/mmcblk0p1/
 
-projects="common_tools led_blinker playground scanner"
+projects="common_tools led_blinker adc_recorder playground scanner"
 
 for p in $projects
 do
