@@ -47,6 +47,7 @@ int main()
   int n, m, counter, position, size, yes = 1;
   uint8_t *buffer0, *buffer1, code;
   uint32_t *coordinates, data;
+  double integral;
   struct command c;
   struct frame f;
   volatile void *cfg, *sts;
@@ -87,13 +88,13 @@ int main()
   cfg16[1] = 100;
 
   /* set frequency */
-  cfg32[2] = (uint32_t)floor(10000000 / 250.0e6 * (1<<30) + 0.5);
-  cfg32[3] = (uint32_t)floor(10000000 / 250.0e6 * (1<<30) + 0.5);
-  cfg32[4] = (uint32_t)floor(10000000 / 250.0e6 * (1<<30) + 0.5);
-  cfg32[5] = (uint32_t)floor(10000000 / 250.0e6 * (1<<30) + 0.5);
-  cfg32[6] = (uint32_t)floor(10000000 / 250.0e6 * (1<<30) + 0.5);
-  cfg32[7] = (uint32_t)floor(10000000 / 250.0e6 * (1<<30) + 0.5);
-  cfg32[8] = (uint32_t)floor(10000000 / 250.0e6 * (1<<30) + 0.5);
+  cfg32[2] = (uint32_t)floor(10000000 / 250.0e6 * 0xffffffff + 0.5);
+  cfg32[3] = (uint32_t)floor(10000000 / 250.0e6 * 0xffffffff + 0.5);
+  cfg32[4] = (uint32_t)floor(10000000 / 250.0e6 * 0xffffffff + 0.5);
+  cfg32[5] = (uint32_t)floor(10000000 / 250.0e6 * 0xffffffff + 0.5);
+  cfg32[6] = (uint32_t)floor(10000000 / 250.0e6 * 0xffffffff + 0.5);
+  cfg32[7] = (uint32_t)floor(10000000 / 250.0e6 * 0xffffffff + 0.5);
+  cfg32[8] = (uint32_t)floor(10000000 / 250.0e6 * 0xffffffff + 0.5);
 
   /* set initial posisition */
   f.h = 0x10020000;
@@ -154,31 +155,31 @@ int main()
           break;
         case 2:
           /* set frequency */
-          cfg32[2] = (uint32_t)floor(data / 250.0e6 * (1<<30) + 0.5);
+          cfg32[2] = (uint32_t)floor(modf(data / 250.0e6, &integral) * 0xffffffff + 0.5);
           break;
         case 3:
           /* set frequency */
-          cfg32[3] = (uint32_t)floor(data / 250.0e6 * (1<<30) + 0.5);
+          cfg32[3] = (uint32_t)floor(modf(data / 250.0e6, &integral) * 0xffffffff + 0.5);
           break;
         case 4:
           /* set frequency */
-          cfg32[4] = (uint32_t)floor(data / 250.0e6 * (1<<30) + 0.5);
+          cfg32[4] = (uint32_t)floor(modf(data / 250.0e6, &integral) * 0xffffffff + 0.5);
           break;
         case 5:
           /* set frequency */
-          cfg32[5] = (uint32_t)floor(data / 250.0e6 * (1<<30) + 0.5);
+          cfg32[5] = (uint32_t)floor(modf(data / 250.0e6, &integral) * 0xffffffff + 0.5);
           break;
         case 6:
           /* set frequency */
-          cfg32[6] = (uint32_t)floor(data / 250.0e6 * (1<<30) + 0.5);
+          cfg32[6] = (uint32_t)floor(modf(data / 250.0e6, &integral) * 0xffffffff + 0.5);
           break;
         case 7:
           /* set frequency */
-          cfg32[7] = (uint32_t)floor(data / 250.0e6 * (1<<30) + 0.5);
+          cfg32[7] = (uint32_t)floor(modf(data / 250.0e6, &integral) * 0xffffffff + 0.5);
           break;
         case 8:
           /* set frequency */
-          cfg32[8] = (uint32_t)floor(data / 250.0e6 * (1<<30) + 0.5);
+          cfg32[8] = (uint32_t)floor(modf(data / 250.0e6, &integral) * 0xffffffff + 0.5);
           break;
         case 9:
           /* clear coordinates */

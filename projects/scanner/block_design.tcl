@@ -235,27 +235,11 @@ for {set i 0} {$i <= 6} {incr i} {
     din hub_0/cfg_data
   }
 
-  # Create axis_constant
-  cell pavel-demin:user:axis_constant phase_$i {
-    AXIS_TDATA_WIDTH 32
+  # Create dds
+  cell pavel-demin:user:dds dds_$i {
+    NEGATIVE_SINE TRUE
   } {
-    cfg_data slice_[expr $i + 7]/dout
-    aclk pll_0/clk_out1
-  }
-
-  # Create dds_compiler
-  cell xilinx.com:ip:dds_compiler dds_$i {
-    DDS_CLOCK_RATE 250
-    SPURIOUS_FREE_DYNAMIC_RANGE 138
-    FREQUENCY_RESOLUTION 0.4
-    PHASE_INCREMENT Streaming
-    HAS_ARESETN true
-    HAS_PHASE_OUT false
-    PHASE_WIDTH 30
-    OUTPUT_WIDTH 24
-    NEGATIVE_SINE true
-  } {
-    S_AXIS_PHASE phase_$i/M_AXIS
+    pinc slice_[expr $i + 7]/dout
     aclk pll_0/clk_out1
     aresetn slice_3/dout
   }
@@ -290,7 +274,7 @@ for {set i 0} {$i <= 13} {incr i} {
   cell pavel-demin:user:port_slicer dds_slice_$i {
     DIN_WIDTH 48 DIN_FROM [expr 24 * ($i % 2) + 23] DIN_TO [expr 24 * ($i % 2)]
   } {
-    din dds_[expr $i / 2]/m_axis_data_tdata
+    din dds_[expr $i / 2]/dout
   }
 
   # Create dsp48
@@ -312,7 +296,7 @@ for {set i 14} {$i <= 15} {incr i} {
   cell pavel-demin:user:port_slicer dds_slice_$i {
     DIN_WIDTH 48 DIN_FROM [expr 24 * ($i % 2) + 23] DIN_TO [expr 24 * ($i % 2)]
   } {
-    din dds_0/m_axis_data_tdata
+    din dds_0/dout
   }
 
   # Create dsp48
@@ -334,7 +318,7 @@ for {set i 16} {$i <= 17} {incr i} {
   cell pavel-demin:user:port_slicer dds_slice_$i {
     DIN_WIDTH 48 DIN_FROM [expr 24 * ($i % 2) + 23] DIN_TO [expr 24 * ($i % 2)]
   } {
-    din dds_1/m_axis_data_tdata
+    din dds_1/dout
   }
 
   # Create dsp48
@@ -356,7 +340,7 @@ for {set i 18} {$i <= 19} {incr i} {
   cell pavel-demin:user:port_slicer dds_slice_$i {
     DIN_WIDTH 48 DIN_FROM [expr 24 * ($i % 2) + 23] DIN_TO [expr 24 * ($i % 2)]
   } {
-    din dds_2/m_axis_data_tdata
+    din dds_2/dout
   }
 
   # Create dsp48
@@ -378,7 +362,7 @@ for {set i 20} {$i <= 23} {incr i} {
   cell pavel-demin:user:port_slicer dds_slice_$i {
     DIN_WIDTH 48 DIN_FROM [expr 24 * ($i % 2) + 23] DIN_TO [expr 24 * ($i % 2)]
   } {
-    din dds_[expr ($i - 14) / 2]/m_axis_data_tdata
+    din dds_[expr ($i - 14) / 2]/dout
   }
 
   # Create dsp48
@@ -400,7 +384,7 @@ for {set i 24} {$i <= 27} {incr i} {
   cell pavel-demin:user:port_slicer dds_slice_$i {
     DIN_WIDTH 48 DIN_FROM [expr 24 * ($i % 2) + 23] DIN_TO [expr 24 * ($i % 2)]
   } {
-    din dds_[expr ($i - 14) / 2]/m_axis_data_tdata
+    din dds_[expr ($i - 14) / 2]/dout
   }
 
   # Create dsp48
