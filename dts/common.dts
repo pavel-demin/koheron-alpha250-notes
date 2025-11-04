@@ -12,8 +12,8 @@
 
 &gem0 {
   phy-handle = <&ethernet_phy>;
-  ethernet_phy: ethernet-phy@1 {
-    reg = <1>;
+  ethernet_phy: ethernet-phy@3 {
+    reg = <3>;
   };
 };
 
