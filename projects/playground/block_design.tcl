@@ -52,7 +52,7 @@ cell xilinx.com:ip:proc_sys_reset rst_0 {} {
 # HUB
 
 # Create axi_hub
-cell pavel-demin:user:axi_hub hub_0 {
+cell axi_hub hub_0 {
   CFG_DATA_WIDTH 96
   STS_DATA_WIDTH 64
 } {
@@ -62,7 +62,7 @@ cell pavel-demin:user:axi_hub hub_0 {
 }
 
 # Create port_slicer
-cell pavel-demin:user:port_slicer slice_0 {
+cell port_slicer slice_0 {
   DIN_WIDTH 96 DIN_FROM 0 DIN_TO 0
 } {
   din hub_0/cfg_data
@@ -77,7 +77,7 @@ delete_bd_objs [get_bd_ports exp_n]
 create_bd_port -dir O -from 7 -to 0 exp_n
 
 # Create port_slicer
-cell pavel-demin:user:port_slicer slice_1 {
+cell port_slicer slice_1 {
   DIN_WIDTH 96 DIN_FROM 39 DIN_TO 32
 } {
   din hub_0/cfg_data
@@ -87,14 +87,14 @@ cell pavel-demin:user:port_slicer slice_1 {
 # DSP48
 
 # Create port_slicer
-cell pavel-demin:user:port_slicer slice_2 {
+cell port_slicer slice_2 {
   DIN_WIDTH 96 DIN_FROM 79 DIN_TO 64
 } {
   din hub_0/cfg_data
 }
 
 # Create port_slicer
-cell pavel-demin:user:port_slicer slice_3 {
+cell port_slicer slice_3 {
   DIN_WIDTH 96 DIN_FROM 95 DIN_TO 80
 } {
   din hub_0/cfg_data
@@ -119,7 +119,7 @@ cell xilinx.com:ip:dsp_macro dsp_0 {
 # COUNTER
 
 # Create axis_counter
-cell pavel-demin:user:axis_counter cntr_0 {
+cell axis_counter cntr_0 {
   AXIS_TDATA_WIDTH 32
 } {
   M_AXIS hub_0/S01_AXIS
@@ -131,7 +131,7 @@ cell pavel-demin:user:axis_counter cntr_0 {
 for {set i 0} {$i <= 3} {incr i} {
 
   # Create axis_adc
-  cell pavel-demin:user:axis_adc adc_$i {
+  cell axis_adc adc_$i {
     ADC_DATA_WIDTH 14
   } {
     adc_n adc_${i}_n
@@ -158,7 +158,7 @@ cell  xilinx.com:ip:axis_combiner comb_0 {
 # FIFO
 
 # Create axis_fifo
-cell pavel-demin:user:axis_fifo fifo_0 {
+cell axis_fifo fifo_0 {
   S_AXIS_TDATA_WIDTH 64
   M_AXIS_TDATA_WIDTH 32
   WRITE_DEPTH 8192
@@ -172,7 +172,7 @@ cell pavel-demin:user:axis_fifo fifo_0 {
 # DAC SPI
 
 # Create axis_fifo
-cell pavel-demin:user:axis_fifo fifo_1 {
+cell axis_fifo fifo_1 {
   S_AXIS_TDATA_WIDTH 32
   M_AXIS_TDATA_WIDTH 32
   WRITE_DEPTH 1024
@@ -183,7 +183,7 @@ cell pavel-demin:user:axis_fifo fifo_1 {
 }
 
 # Create axis_spi
-cell pavel-demin:user:axis_spi spi_0 {
+cell axis_spi spi_0 {
   SPI_DATA_WIDTH 24
   AXIS_TDATA_WIDTH 24
 } {

@@ -58,7 +58,7 @@ cell xilinx.com:ip:c_counter_binary cntr_0 {
 }
 
 # Create port_slicer
-cell pavel-demin:user:port_slicer slice_0 {
+cell port_slicer slice_0 {
   DIN_WIDTH 32 DIN_FROM 27 DIN_TO 27
 } {
   din cntr_0/Q
